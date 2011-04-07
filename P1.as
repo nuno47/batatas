@@ -1,4 +1,3 @@
-
 ; Definicao de constantes
 
 ;STACK POINTER
@@ -151,45 +150,6 @@ EscreveMens:	PUSH	TITULO
 		CALL	EscString			
 
 
-;margem direita
-DPISTA0   	STR     '|',FIM_TEXTO
-DPISTA1   	STR     '|',FIM_TEXTO
-DPISTA2   	STR     '|',FIM_TEXTO
-DPISTA3   	STR     '|',FIM_TEXTO
-DPISTA4   	STR     '|',FIM_TEXTO
-DPISTA5   	STR     '|',FIM_TEXTO
-DPISTA6   	STR     '|',FIM_TEXTO
-DPISTA7   	STR     '|',FIM_TEXTO
-DPISTA8   	STR     '|',FIM_TEXTO
-DPISTA9   	STR     '|',FIM_TEXTO
-DPISTA10  	STR     '|',FIM_TEXTO
-DPISTA11  	STR     '|',FIM_TEXTO
-DPISTA12  	STR     '|',FIM_TEXTO
-DPISTA13  	STR     '|',FIM_TEXTO
-DPISTA14  	STR     '|',FIM_TEXTO
-DPISTA15  	STR     '|',FIM_TEXTO
-DPISTA16  	STR     '|',FIM_TEXTO
-DPISTA17  	STR     '|',FIM_TEXTO
-DPISTA18  	STR     '|',FIM_TEXTO
-DPISTA19  	STR     '|',FIM_TEXTO
-DPISTA20  	STR     '|',FIM_TEXTO
-
-;margem fundo
-CANTO0		STR	'+',FIM_TEXTO
-FPISTA0		STR     '-',FIM_TEXTO
-FPISTA1		STR     '-',FIM_TEXTO
-FPISTA2		STR     '-',FIM_TEXTO
-FPISTA3		STR     '-',FIM_TEXTO
-FPISTA4		STR     '-',FIM_TEXTO
-FPISTA5		STR     '-',FIM_TEXTO
-FPISTA6		STR     '-',FIM_TEXTO
-FPISTA7		STR     '-',FIM_TEXTO
-FPISTA8		STR     '-',FIM_TEXTO
-CANTO1		STR	'+',FIM_TEXTO	
-;===============================================================================
-; POSICAO STRING OUTPUT: Posições XY de linha/coluna onde vão Ser escritas
-;                       as strings (1º caracter)
-;===============================================================================            
 
 
 
@@ -253,118 +213,6 @@ FimEsc:         POP     R3
                 POP     R2
                 POP     R1
                 RETN    2                
-
-
-
-
-;===============================================================================
-; rotinsa que escrevem os caracteres correspondentes à pista
-;                
-;===============================================================================
-
-
-
-                        
-
-MargemDireita:          PUSH    DPISTA0
-                        PUSH    DPOS_PISTA0
-                        CALL    EscString
-                        PUSH    DPISTA1
-                        PUSH    DPOS_PISTA1
-                        CALL    EscString
-                        PUSH    DPISTA2
-                        PUSH    DPOS_PISTA2
-                        CALL    EscString
-                        PUSH    DPISTA3
-                        PUSH    DPOS_PISTA3
-                        CALL    EscString
-                        PUSH    DPISTA4
-                        PUSH    DPOS_PISTA4
-                        CALL    EscString
-                        PUSH    DPISTA5
-                        PUSH    DPOS_PISTA5
-                        CALL    EscString
-                        PUSH    DPISTA6
-                        PUSH    DPOS_PISTA6
-                        CALL    EscString
-                        PUSH    DPISTA7
-                        PUSH    DPOS_PISTA7
-                        CALL    EscString
-                        PUSH    DPISTA8
-                        PUSH    DPOS_PISTA8
-                        CALL    EscString
-                        PUSH    DPISTA9
-                        PUSH    DPOS_PISTA9
-                        CALL    EscString
-                        PUSH    DPISTA10
-                        PUSH    DPOS_PISTA10
-                        CALL    EscString
-                        PUSH    DPISTA11
-                        PUSH    DPOS_PISTA11
-                        CALL    EscString
-                        PUSH    DPISTA12
-                        PUSH    DPOS_PISTA12
-                        CALL    EscString
-                        PUSH    DPISTA13
-                        PUSH    DPOS_PISTA13
-                        CALL    EscString
-                        PUSH    DPISTA14
-                        PUSH    DPOS_PISTA14
-                        CALL    EscString
-                        PUSH    DPISTA15
-                        PUSH    DPOS_PISTA15
-                        CALL    EscString
-                        PUSH    DPISTA16
-                        PUSH    DPOS_PISTA16
-                        CALL    EscString
-                        PUSH    DPISTA17
-                        PUSH    DPOS_PISTA17
-                        CALL    EscString
-                        PUSH    DPISTA18
-                        PUSH    DPOS_PISTA18
-                        CALL    EscString
-                        PUSH    DPISTA19
-                        PUSH    DPOS_PISTA19
-                        CALL    EscString
-                        
-
-MargemFundo:		PUSH    CANTO0
-                        PUSH    POS_CANTO0
-                        CALL    EscString
-			PUSH	FPISTA0
-			PUSH	POS_FPISTA0
-			CALL	EscString
-                        PUSH    FPISTA1
-                        PUSH    POS_FPISTA1
-                        CALL    EscString
-                        PUSH    FPISTA2
-                        PUSH    POS_FPISTA2
-                        CALL    EscString
-                        PUSH    FPISTA3
-                        PUSH    POS_FPISTA3
-                        CALL    EscString
-                        PUSH    FPISTA4
-                        PUSH    POS_FPISTA4
-                        CALL    EscString
-                        PUSH    FPISTA5
-                        PUSH    POS_FPISTA5
-                        CALL    EscString
-                        PUSH    FPISTA6
-                        PUSH    POS_FPISTA6
-                        CALL    EscString
-                        PUSH    FPISTA7
-                        PUSH    POS_FPISTA7
-                        CALL    EscString
-                        PUSH    FPISTA8
-                        PUSH    POS_FPISTA8
-                        PUSH    CANTO1
-                        PUSH    POS_CANTO1
-                	CALL    EscString
-                        
-
-
-
-
 
 
 ;===============================================================================
