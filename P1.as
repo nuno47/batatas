@@ -72,67 +72,67 @@ POS_FIM_FUNDO	EQU	1429h
 		ORIG	0000h
 		JMP	inicio
 
-LimiteEsquerdo:		PUSH	R1
-			PUSH	R2
-			PUSH	R3		
-			MOV	R1, PAREDE		
-			MOV	R2, POS_LIM_ESQ
-			MOV	R3, POS_FIM_ESQ         
-Cicl:			MOV	M[IO_CURSOR], R2	
-			MOV	M[IO_WRITE], R1 
-	                ADD	R2, MUDA_LINHA					
-			CMP	R3, R2
-			BR.NN	Cicl
-			POP	R3
-			POP	R2
-			POP	R1
-			RET
+LimiteEsquerdo:	PUSH	R1
+		PUSH	R2
+		PUSH	R3		
+		MOV	R1, PAREDE		
+		MOV	R2, POS_LIM_ESQ
+		MOV	R3, POS_FIM_ESQ         
+Cicl:		MOV	M[IO_CURSOR], R2	
+		MOV	M[IO_WRITE], R1 
+		ADD	R2, MUDA_LINHA					
+		CMP	R3, R2
+		BR.NN	Cicl
+		POP	R3
+		POP	R2
+		POP	R1
+		RET
 			
 
-LimiteDireito:		PUSH	R1
-			PUSH	R2
-			PUSH	R3
-			MOV	R1, PAREDE
-			MOV	R2, POS_LIM_DIR
-			MOV	R3, POS_FIM_DIR
-Cicl2:			MOV	M[IO_CURSOR], R2
-			MOV	M[IO_WRITE], R1
-			ADD	R2, MUDA_LINHA
-			CMP	R3, R2
-			BR.NN	Cicl2
-			POP	R3
-			POP	R2
-			POP	R1
-			RET
+LimiteDireito:	PUSH	R1
+		PUSH	R2
+		PUSH	R3
+		MOV	R1, PAREDE
+		MOV	R2, POS_LIM_DIR
+		MOV	R3, POS_FIM_DIR
+Cicl2:		MOV	M[IO_CURSOR], R2
+		MOV	M[IO_WRITE], R1
+		ADD	R2, MUDA_LINHA
+		CMP	R3, R2
+		BR.NN	Cicl2
+		POP	R3
+		POP	R2
+		POP	R1
+		RET
 
 
-Cantos:			PUSH	R1
-			PUSH	R2
-			MOV	R1, CANTO
-			MOV	R2, POS_CANTOE
-			MOV	R3, POS_CANTOD
-Cicl3:			MOV	M[IO_CURSOR], R2
-			MOV	M[IO_WRITE], R1
-			ADD	R2, MUDA_LADO
-			CMP	R3, R2
-			BR.NN	Cicl3
-			POP	R2
-			POP	R1
-			RET	
+Cantos:		PUSH	R1
+		PUSH	R2
+		MOV	R1, CANTO
+		MOV	R2, POS_CANTOE
+		MOV	R3, POS_CANTOD
+Cicl3:		MOV	M[IO_CURSOR], R2
+		MOV	M[IO_WRITE], R1
+		ADD	R2, MUDA_LADO
+		CMP	R3, R2
+		BR.NN	Cicl3
+		POP	R2
+		POP	R1
+		RET	
 
-Fundo:			PUSH	R1
-			PUSH	R2
-			MOV	R1, FUNDO
-			MOV	R2, POS_INI_FUNDO
-			MOV	R3, POS_FIM_FUNDO
-Cicl4:			MOV	M[IO_CURSOR], R2
-			MOV	M[IO_WRITE], R1
-			INC	R2
-			CMP	R3,R2
-			BR.NN	Cicl4
-			POP	R2
-			POP	R1
-			RET	
+Fundo:		PUSH	R1
+		PUSH	R2
+		MOV	R1, FUNDO
+		MOV	R2, POS_INI_FUNDO
+		MOV	R3, POS_FIM_FUNDO
+Cicl4:		MOV	M[IO_CURSOR], R2
+		MOV	M[IO_WRITE], R1
+		INC	R2
+		CMP	R3,R2
+		BR.NN	Cicl4
+		POP	R2
+		POP	R1
+		RET	
 
 EscreveMens:	PUSH	TITULO
 		PUSH	POS_TITULO
@@ -261,10 +261,10 @@ EscCar:         PUSH	R1
 
 
 
-LeCar:                  CMP     R0, M[TEXTO_ESTADO]
-                        BR.Z    LeCar
-                        MOV     R1,M[LIMPAR_JANELA]
-                        RET
+LeCar:		CMP     R0, M[TEXTO_ESTADO]
+                BR.Z    LeCar
+                MOV     R1,M[LIMPAR_JANELA]
+                RET
 
 
 
@@ -276,12 +276,11 @@ LeCar:                  CMP     R0, M[TEXTO_ESTADO]
 ;               Efeitos:-----
 ;===============================================================================
 
-LimpaJanela:            PUSH    R2
-                        MOV     R2, LIMPAR_JANELA
-                        MOV     M[IO_CURSOR], R2
-                        POP     R2
-                        RET
-
+LimpaJanela:    PUSH    R2
+                MOV     R2, LIMPAR_JANELA
+                MOV     M[IO_CURSOR], R2
+                POP     R2
+                RET
  
 
 
