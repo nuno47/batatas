@@ -30,20 +30,21 @@ PAREDE		EQU	'|'
 BASE		EQU	'-'
 CANTO		EQU	'+'
 FUNDO		EQU	'-'
+PEÇA4		EQU	'
 
 		ORIG	8000h
-TITULO		STR	'Jogo Line Breaker', FIM_TEXTO
-PONTUACAO	STR	'Pontuação maxima:', FIM_TEXTO
+TITULO		STR	'Jogo Line Breaker',FIM_TEXTO
+PONTUACAO	STR	'Pontuacao maxima:',FIM_TEXTO
 VALOR_PONT	STR	'0', FIM_TEXTO
-PREMIR_JOG	STR	'Premir uma tecla para', FIM_TEXTO
-PREMIR_JOG2	STR	'jogar', FIM_TEXTO
+PREMIR_JOG	STR	'Premir uma tecla para',FIM_TEXTO
+PREMIR_JOG2	STR	'jogar',FIM_TEXTO
 
 ; Posições onde vão ser escritas as strings
 POS_TITULO	EQU	032Eh
 POS_PONTUACAO	EQU	062Eh
-POS_VALOR_PONT	EQU	0760h
-POS_PREMIR_JOG	EQU	096Dh
-POS_PREMIR_JOG2	EQU	0A6Dh
+POS_VALOR_PONT	EQU	0736h
+POS_PREMIR_JOG	EQU	0D2Dh
+POS_PREMIR_JOG2	EQU	0E2Dh
 
 	
 
@@ -147,9 +148,14 @@ EscreveMens:	PUSH	TITULO
 		CALL	EscString
 		PUSH	PREMIR_JOG2
 		PUSH	POS_PREMIR_JOG2
-		CALL	EscString			
+		CALL	EscString	
+		RET		
 
 
+;===============================================================================
+; POSICAO STRING OUTPUT: Posições XY de linha/coluna onde vão Ser escritas
+;                       as strings (1º caracter)
+;===============================================================================            
 
 
 
@@ -205,7 +211,7 @@ Ciclo:          MOV     M[IO_CURSOR], R3
                 MOV     R1, M[R2]
                 CMP     R1, FIM_TEXTO
                 BR.Z    FimEsc
-                CALL    EscCar
+		MOV     M[IO_WRITE], R1
                 INC     R2
                 INC     R3
                 BR      Ciclo
@@ -215,19 +221,33 @@ FimEsc:         POP     R3
                 RETN    2                
 
 
+
+
+;===============================================================================
+; rotinsa que escrevem os caracteres correspondentes à pista
+;                
+;===============================================================================
+
+                        
+
+
+
+
+
+
 ;===============================================================================
 ;EscCar : Rotina que escreve no ecra 1 caracter
-;         Entradas: R1
+;         Entradas: Pilha
 ;         Saidas:-----
 ;         Efeitos: Escreve no Ecra 1 caracter
 ;===============================================================================
 
 
-EscCar:		PUSH	R1
-		MOV	R1, M[SP+3]      
+EscCar:         PUSH	R1
+		MOV	R1, M[SP+3]
 		MOV     M[IO_WRITE], R1
 		POP	R1
-		RETN	1
+                RETN	1
 
 ;===============================================================================
 ;leCar : Rotina que efectua a leitura de um caracter
