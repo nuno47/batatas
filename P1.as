@@ -5,11 +5,12 @@ SP_INICIAL	EQU     FDFFh
 
 
 ;INTERRUPCOES
-TAB_INT0	EQU     FE00h
-TAB_INT1	EQU     FE0Bh
-MASCARA_INT	EQU     0000100000000001b
-
-
+InterruptMask	EQU     FFFAh
+TimerValue	EQU	FFF6h
+TimerContol	EQU	FFF7h
+Interrupts	EQU	8000h
+TimeLong	EQU	0010h
+EnableTimer	EQU	0001h
 
 ;I/O
 DISP7S1         EQU     FFF0h
@@ -30,7 +31,7 @@ PAREDE		EQU	'|'
 BASE		EQU	'-'
 CANTO		EQU	'+'
 FUNDO		EQU	'-'
-PEÇA4		EQU	'
+PECA4		EQU	'#'
 
 		ORIG	8000h
 TITULO		STR	'Jogo Line Breaker',FIM_TEXTO
@@ -69,8 +70,22 @@ POS_INI_FUNDO	EQU	1421h
 ;Ultima posição do caracter do fundo
 POS_FIM_FUNDO	EQU	1429h
 
+		ORIG	FE0Fh	;FE00h + Fh (15)
+INT15		WORD	TimerSub
+
 		ORIG	0000h
 		JMP	inicio
+
+TimerSub:	PUSH	R1
+		MOV	R1, TimeLong
+		MOV	M[TimerValue], R1
+		MOV	R1, EnableTimer
+		MOV	M[TimerControl], R1
+
+		;Operações por fazer
+
+		POP 	R1
+		RTI
 
 LimiteEsquerdo:	PUSH	R1
 		PUSH	R2
@@ -281,13 +296,21 @@ LimpaJanela:    PUSH    R2
                 MOV     M[IO_CURSOR], R2
                 POP     R2
                 RET
- 
+
+
 
 
 ; Programa Principal
 
 inicio:         MOV     R1, SP_INICIAL
                 MOV     SP, R1
+		MOV	R1, Interrupts
+		MOV	M[InterruptMask], R1
+		MOV	R1, TimeLong
+		MOV	R1, TimeLong
+		MOV	M[TimerValue], R1
+		MOV	R1, EnableTimer
+		MOV	M[TimerControl], R1
                 ENI
                 CALL    LimpaJanela
 		CALL	LimiteEsquerdo
