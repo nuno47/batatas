@@ -34,6 +34,7 @@ FUNDO		EQU	'-'
 PECA4		EQU	'#'
 POSPECAINIT	EQU	0025h
 QUEDACOUNTDOWN	EQU	0010h
+JOGO_DIM	EQU	180
 
 		ORIG	8000h
 TITULO		STR	'Jogo Line Breaker',FIM_TEXTO
@@ -42,7 +43,10 @@ VALOR_PONT	STR	'0', FIM_TEXTO
 PREMIR_JOG	STR	'Premir uma tecla para',FIM_TEXTO
 PREMIR_JOG2	STR	'jogar',FIM_TEXTO
 PECAJOGAVEL	TAB	1
+LINHAS		TAB	20
 TEMPCHKPT	WORD	0000h
+MANDOUCAIR	WORD	0000h
+JOGO		TAB	JOGO_DIM	; (linha-1 x 9) + (coluna - 1)
 
 ; Posições onde vão ser escritas as strings
 POS_TITULO	EQU	032Eh
@@ -212,6 +216,10 @@ DesenhaPeca:	PUSH	R1
 		MOV	R2, POSPECAINIT
 		MOV	M[IO_CURSOR], R2
 		MOV	M[IO_WRITE], R1
+		ENI
+DesenhaDelay:	CMP	M[TEMPCHKPT], R0
+		BR.Z	DesenhaDelay
+		MOV	M[TEMPCHKPT], R0
 		POP	R2
 		POP	R1
 		RET
@@ -226,6 +234,8 @@ MovePeca:	PUSH	R1
 		MOV	R1, PECA4
 		MOV	R2, POSPECAINIT
 		MOV	R3, QUEDACOUNTDOWN
+		CMP	M[MANDOUCAIR], R0
+		BR.NZ	FimMovePeca
 		MOV	R5, 8h ;Deslocamentos para a esquerda
 PreparaMD:	MOV	R4, 4h ;Deslocamentos para a direita
 
@@ -243,6 +253,8 @@ MoveDireita:	CMP	R3, R0 ;Peca ja deu uma volta
 		MOV	M[IO_WRITE], R1
 		DEC	R3
 		DEC	R4
+		CMP	M[MANDOUCAIR], R0
+		BR.NZ	FimMovePeca
 AguardaDir:	CMP	M[TEMPCHKPT], R0
 		BR.Z	AguardaDir
 		MOV	M[TEMPCHKPT], R0
@@ -260,17 +272,44 @@ PreparaME:	PUSH	R2
 		MOV	M[IO_WRITE], R1
 		DEC	R3
 		DEC	R5
+		CMP	M[MANDOUCAIR], R0
+		BR.NZ	FimMovePeca
 AguardaEsq:	CMP	M[TEMPCHKPT], R0
 		BR.Z	AguardaEsq
 		MOV	M[TEMPCHKPT], R0
 		BR	MoveEsquerda
 
-FimMovePeca:	POP	R5
+FimMovePeca:	DSI
+		POP	R5
 		POP	R4
 		POP	R3
 		POP	R2
 		POP	R1
 		RET
+
+QuedaPeca:	PUSH	R1
+		PUSH	R2
+		PUSH	R3
+		MOV	R1, M[IO_CURSOR]
+		MOV	R3, M[PECAJOGAVEL]
+		;descompactar valor do indice de JOGO para R2
+		;PUSH	R1
+		;CALL	CalculaIndice
+		;POP	R2
+VerificaEspaco:	CMP	M[R2+JOGO], ' '
+		BR.NZ	ParouPeca ; Encontrou algo escrito
+		ADD	R1, 100h ;Passa para a linha seguinte
+		MOV	M[IO_CURSOR], R1
+		MOV	M[IO_WRITE], R3
+		ADD	R2, 9h ;Passa pra linha seguinte
+		BR	VerificaEspaco
+ParouPeca:	SUB	R2, 9 ;Retorna à linha onde tem espaço de escrita
+		MOV	M[R2 + JOGO], R3
+		POP	R3
+		POP	R2
+		POP	R1
+		RET
+		
 
 ;===============================================================================
 ; rotinsa que escrevem os caracteres correspondentes à pista
@@ -278,7 +317,6 @@ FimMovePeca:	POP	R5
 ;===============================================================================
 
 IniciaJogo:	CALL	DesenhaPeca
-		ENI
 PodeMover:	CMP	M[TEMPCHKPT], R0
 		BR.Z	PodeMover
 		;DSI
@@ -363,4 +401,5 @@ inicio:         MOV     R1, SP_INICIAL
 		CALL	EscreveMens	
 		CALL    LeCar
 		CALL	IniciaJogo
+		CALL	QuedaPeca
 Fim:		BR	Fim
