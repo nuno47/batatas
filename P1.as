@@ -33,8 +33,7 @@ CANTO		EQU	'+'
 FUNDO		EQU	'-'
 PECA4		EQU	'#'
 POSPECAINIT	EQU	0025h
-TEMPCHKPT	EQU	0000h
-QUEDACOUNTDOWN	EQU	000fh
+QUEDACOUNTDOWN	EQU	0010h
 
 		ORIG	8000h
 TITULO		STR	'Jogo Line Breaker',FIM_TEXTO
@@ -43,6 +42,7 @@ VALOR_PONT	STR	'0', FIM_TEXTO
 PREMIR_JOG	STR	'Premir uma tecla para',FIM_TEXTO
 PREMIR_JOG2	STR	'jogar',FIM_TEXTO
 PECAJOGAVEL	TAB	1
+TEMPCHKPT	WORD	0000h
 
 ; Posições onde vão ser escritas as strings
 POS_TITULO	EQU	032Eh
@@ -85,7 +85,8 @@ TimerSub:	PUSH	R1
 		MOV	M[TimerValue], R1
 		MOV	R1, EnableTimer
 		MOV	M[TimerControl], R1
-		COM	M[TEMPCHKPT]
+		MOV	R1, 1h
+		MOV	M[TEMPCHKPT], R1
 		POP 	R1
 		RTI
 
@@ -225,9 +226,15 @@ MovePeca:	PUSH	R1
 		MOV	R1, PECA4
 		MOV	R2, POSPECAINIT
 		MOV	R3, QUEDACOUNTDOWN
-		MOV	R4, PAREDE
-MoveDireita:	INC	R2
-		;Colisoes por fazer
+		MOV	R5, 8h ;Deslocamentos para a esquerda
+PreparaMD:	MOV	R4, 4h ;Deslocamentos para a direita
+
+MoveDireita:	CMP	R3, R0 ;Peca ja deu uma volta
+		JMP.Z	FimMovePeca
+		CMP	R4, R0 ;Peca Bate na Parede Direita
+		BR.Z	PreparaME
+		INC	R2
+		;Colisoes com outras pecas por fazer
 		DEC	R2
 		PUSH	R2
 		CALL	LimpaCar
@@ -235,8 +242,30 @@ MoveDireita:	INC	R2
 		MOV	M[IO_CURSOR], R2
 		MOV	M[IO_WRITE], R1
 		DEC	R3
+		DEC	R4
+AguardaDir:	CMP	M[TEMPCHKPT], R0
+		BR.Z	AguardaDir
+		MOV	M[TEMPCHKPT], R0
+		BR	MoveDireita
 
-		POP	R5
+MoveEsquerda:	CMP	R5, R0 ;Peca bate na parede esquerda
+		BR.Z	PreparaMD
+		DEC	R2
+		;Colisoes com outras pecas por fazer
+		INC	R2
+PreparaME:	PUSH	R2
+		CALL	LimpaCar
+		DEC	R2
+		MOV	M[IO_CURSOR], R2
+		MOV	M[IO_WRITE], R1
+		DEC	R3
+		DEC	R5
+AguardaEsq:	CMP	M[TEMPCHKPT], R0
+		BR.Z	AguardaEsq
+		MOV	M[TEMPCHKPT], R0
+		BR	MoveEsquerda
+
+FimMovePeca:	POP	R5
 		POP	R4
 		POP	R3
 		POP	R2
@@ -252,7 +281,8 @@ IniciaJogo:	CALL	DesenhaPeca
 		ENI
 PodeMover:	CMP	M[TEMPCHKPT], R0
 		BR.Z	PodeMover
-		DSI
+		;DSI
+		MOV	M[TEMPCHKPT], R0
 		CALL	MovePeca
 		RET
 
