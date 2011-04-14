@@ -7,7 +7,7 @@ SP_INICIAL	EQU     FDFFh
 ;INTERRUPCOES
 InterruptMask	EQU     FFFAh
 TimerValue	EQU	FFF6h
-TimerContol	EQU	FFF7h
+TimerControl	EQU	FFF7h
 Interrupts	EQU	8000h
 TimeLong	EQU	0010h
 EnableTimer	EQU	0001h
@@ -32,6 +32,9 @@ BASE		EQU	'-'
 CANTO		EQU	'+'
 FUNDO		EQU	'-'
 PECA4		EQU	'#'
+POSPECAINIT	EQU	0025h
+TEMPCHKPT	EQU	0000h
+QUEDACOUNTDOWN	EQU	000fh
 
 		ORIG	8000h
 TITULO		STR	'Jogo Line Breaker',FIM_TEXTO
@@ -39,6 +42,7 @@ PONTUACAO	STR	'Pontuacao maxima:',FIM_TEXTO
 VALOR_PONT	STR	'0', FIM_TEXTO
 PREMIR_JOG	STR	'Premir uma tecla para',FIM_TEXTO
 PREMIR_JOG2	STR	'jogar',FIM_TEXTO
+PECAJOGAVEL	TAB	1
 
 ; Posições onde vão ser escritas as strings
 POS_TITULO	EQU	032Eh
@@ -81,9 +85,7 @@ TimerSub:	PUSH	R1
 		MOV	M[TimerValue], R1
 		MOV	R1, EnableTimer
 		MOV	M[TimerControl], R1
-
-		;Operações por fazer
-
+		COM	M[TEMPCHKPT]
 		POP 	R1
 		RTI
 
@@ -175,43 +177,7 @@ EscreveMens:	PUSH	TITULO
 
 
 
-; posição da margem direita
 
-DPOS_PISTA0   	EQU     002Ah
-DPOS_PISTA1   	EQU     012Ah
-DPOS_PISTA2   	EQU     022Ah
-DPOS_PISTA3   	EQU     032Ah
-DPOS_PISTA4   	EQU     042Ah
-DPOS_PISTA5   	EQU     052Ah
-DPOS_PISTA6   	EQU     062Ah
-DPOS_PISTA7   	EQU     072Ah
-DPOS_PISTA8   	EQU     082Ah
-DPOS_PISTA9   	EQU     092Ah
-DPOS_PISTA10 	EQU     0A2Ah  
-DPOS_PISTA11 	EQU     0B2Ah  
-DPOS_PISTA12 	EQU     0C2Ah  
-DPOS_PISTA13 	EQU     0D2Ah
-DPOS_PISTA14 	EQU     0E2Ah  
-DPOS_PISTA15 	EQU     0F2Ah  
-DPOS_PISTA16 	EQU     102Ah  
-DPOS_PISTA17 	EQU     112Ah  
-DPOS_PISTA18 	EQU     122Ah
-DPOS_PISTA19 	EQU     132Ah  
-
-
-;posição da margem fundo
-
-POS_CANTO0	EQU	1420h
-POS_FPISTA0	EQU	1421h
-POS_FPISTA1	EQU     1422h
-POS_FPISTA2	EQU  	1423h
-POS_FPISTA3	EQU   	1424h
-POS_FPISTA4	EQU   	1425h
-POS_FPISTA5	EQU   	1426h	
-POS_FPISTA6	EQU   	1427h
-POS_FPISTA7	EQU   	1428h
-POS_FPISTA8	EQU   	1429h
-POS_CANTO1	STR	142Ah
 
 
  
@@ -235,19 +201,60 @@ FimEsc:         POP     R3
                 POP     R1
                 RETN    2                
 
+DesenhaPeca:	PUSH	R1
+		PUSH	R2
+		;Chamada Aleatoria por implementar aqui
+		;Fica registada em memoria e acedida através de:
+		;CALL	EscolhePeca
+		;MOV	R1, M[PECAJOGAVEL]
+		MOV	R1, PECA4
+		MOV	R2, POSPECAINIT
+		MOV	M[IO_CURSOR], R2
+		MOV	M[IO_WRITE], R1
+		POP	R2
+		POP	R1
+		RET
 
+MovePeca:	PUSH	R1
+		PUSH	R2
+		PUSH	R3
+		PUSH	R4
+		PUSH	R5
+		;Pecas aleatorias por implementar
+		;MOV	R1, M[PECAJOGAVEL]
+		MOV	R1, PECA4
+		MOV	R2, POSPECAINIT
+		MOV	R3, QUEDACOUNTDOWN
+		MOV	R4, PAREDE
+MoveDireita:	INC	R2
+		;Colisoes por fazer
+		DEC	R2
+		PUSH	R2
+		CALL	LimpaCar
+		INC	R2
+		MOV	M[IO_CURSOR], R2
+		MOV	M[IO_WRITE], R1
+		DEC	R3
 
+		POP	R5
+		POP	R4
+		POP	R3
+		POP	R2
+		POP	R1
+		RET
 
 ;===============================================================================
 ; rotinsa que escrevem os caracteres correspondentes à pista
 ;                
 ;===============================================================================
 
-                        
-
-
-
-
+IniciaJogo:	CALL	DesenhaPeca
+		ENI
+PodeMover:	CMP	M[TEMPCHKPT], R0
+		BR.Z	PodeMover
+		DSI
+		CALL	MovePeca
+		RET
 
 
 ;===============================================================================
@@ -297,6 +304,13 @@ LimpaJanela:    PUSH    R2
                 POP     R2
                 RET
 
+LimpaCar:	PUSH	R1
+		MOV	R1, M[SP+3]
+		MOV	M[IO_CURSOR], R1
+		MOV	R1, ' '
+		MOV	M[IO_WRITE], R1
+		POP	R1
+		RETN	1
 
 
 
@@ -311,12 +325,12 @@ inicio:         MOV     R1, SP_INICIAL
 		MOV	M[TimerValue], R1
 		MOV	R1, EnableTimer
 		MOV	M[TimerControl], R1
-                ENI
                 CALL    LimpaJanela
 		CALL	LimiteEsquerdo
 		CALL	LimiteDireito
 		CALL	Cantos
 		CALL	Fundo 
 		CALL	EscreveMens	
-Fim:            CALL    LeCar  
-                CALL    Fim
+		CALL    LeCar
+		CALL	IniciaJogo
+Fim:		BR	Fim
