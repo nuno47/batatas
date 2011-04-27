@@ -26,6 +26,7 @@ FIM_TEXTO       EQU     '@'
 LIMPAR_JANELA   EQU     FFFFh
 TEXTO_ESTADO    EQU     FFFDh
 MUDA_LINHA	EQU	0100h
+LINHA_SEG	EQU	0009h
 MUDA_LADO	EQU	000Ah
 PAREDE		EQU	'|'
 BASE		EQU	'-'
@@ -175,8 +176,7 @@ EscreveMens:	PUSH	TITULO
 
 
 ;===============================================================================
-; POSICAO STRING OUTPUT: Posições XY de linha/coluna onde vão Ser escritas
-;                       as strings (1º caracter)
+
 ;===============================================================================            
 
 
@@ -301,7 +301,7 @@ VerificaEspaco:	CMP	M[R2+JOGO], ' '
 		ADD	R1, 100h ;Passa para a linha seguinte
 		MOV	M[IO_CURSOR], R1
 		MOV	M[IO_WRITE], R3
-		ADD	R2, 9h ;Passa pra linha seguinte
+		ADD	R2, LINHA_SEG ;Passa pra linha seguinte
 		BR	VerificaEspaco
 ParouPeca:	SUB	R2, 9 ;Retorna à linha onde tem espaço de escrita
 		MOV	M[R2 + JOGO], R3
@@ -312,8 +312,6 @@ ParouPeca:	SUB	R2, 9 ;Retorna à linha onde tem espaço de escrita
 		
 
 ;===============================================================================
-; rotinsa que escrevem os caracteres correspondentes à pista
-;                
 ;===============================================================================
 
 IniciaJogo:	CALL	DesenhaPeca
